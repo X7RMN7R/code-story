@@ -16,18 +16,27 @@ public class WebServer extends AbstractHandler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
             throws IOException, ServletException {
-        String question = request.getParameter(QUERY_PARAMETER);
-        System.out.println(question);
-
-		String answer = "Could you repeat the question ?";
-		if ("Quelle est ton adresse email".equals(question)) {
-            answer = "uv0.xtr@gmail.com";
-        }
-        response.setContentType("text/plain;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
-        PrintWriter writer = response.getWriter();
-        writer.println(answer);
-        writer.close();
+    	System.out.println(request);
+    	if ("GET".equals(request.getMethod())) {
+	    	String question = request.getParameter(QUERY_PARAMETER);
+	        String answer = "Could you repeat the question ?";
+			
+			QuestionsEnum questionEnum = QuestionsEnum.fromQuestion(question);
+			if (questionEnum != null) {
+				System.out.println(question);
+				answer = questionEnum.getAnswer();
+			}
+			
+	        response.setContentType("text/plain;charset=utf-8");
+	        response.setStatus(HttpServletResponse.SC_OK);
+	        PrintWriter writer = response.getWriter();
+	        writer.println(answer);
+	        writer.close();
+    	}
+    	if ("POST".equals(request.getMethod())) {
+    		// POST request - return 201
+    		response.setStatus(HttpServletResponse.SC_CREATED);
+    	}
     }
 
     public static void main(String[] args) throws Exception {
